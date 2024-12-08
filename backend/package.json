@@ -10,6 +10,7 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
+	"type": "module",
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
 		"cloudinary": "^2.5.1",
