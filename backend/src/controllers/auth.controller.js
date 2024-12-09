@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 
 import User from "../models/user.model.js";
 import { generateToken } from "../utils/generateToken.js";
+import cloudinary from "../utils/cloudinary.js";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -90,7 +91,20 @@ export const logout = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-	res.send("cloudinary need to write");
+	const { profilePic } = req.file;
+	try {
+		if (!profilePic) {
+			return res.status(400).json({ message: "Profile pic is required" });
+		}
+		const uploadResponse = await cloudinary.uploader.upload(profilePic);
+		const userUpdate = await User.findById(req.user._id)
+		user.profilePic= uploadResponse.secure_url
+		await user.save()
+		return res.status(200).json(userUpdate)
+	} catch (error) {
+		console.log("Error in updateProfile controller", error.message);
+		res.status(500).json({ message: "Internal Server Error" });
+	}
 };
 
 export const checkAuth = (req, res) => {

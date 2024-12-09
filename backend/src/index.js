@@ -15,13 +15,6 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 
-if (process.env.NODE_ENV === "development") {
-	console.log("This is the development environment.");
-} else if (process.env.NODE_ENV === "production") {
-	console.log("This is the production environment.");
-} else {
-	console.log("Environment not set.");
-}
 
 app.listen(PORT, () => {
 	console.log(`server is running on port : ${PORT}`);
