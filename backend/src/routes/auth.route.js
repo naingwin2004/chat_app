@@ -1,6 +1,6 @@
 import express from "express";
 
-import upload from "../middleware/multer.js"
+import upload from "../middleware/multer.js";
 import {
 	signup,
 	login,
@@ -16,7 +16,12 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 
-router.post("/update-profile", productRoute,upload.single("profile"), updateProfile);
-router.post("/check-auth",productRoute, checkAuth);
+router.post(
+	"/update-profile",
+	productRoute,
+	upload.single("profilePic"),
+	updateProfile,
+);
+router.get("/check-auth", productRoute, checkAuth);
 
 export default router;

@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import { connectDB } from "./utils/db.js";
@@ -13,6 +14,12 @@ const app = express();
 
 app.use(express.json()); // req.body => parse json data
 app.use(cookieParser()); // parse to cookie
+app.use(
+	cors({
+		origin: process.env.CLIENT_URI,
+		credentials: true,
+	}),
+);
 
 app.use("/api/auth", authRoute);
 app.use("/api/message", messageRoute);

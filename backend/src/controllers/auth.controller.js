@@ -40,6 +40,7 @@ export const signup = async (req, res) => {
 			fullName: newUser.fullName,
 			email: newUser.email,
 			profilePic: newUser.profilePic,
+			createdAt: newUser.createdAt,
 		});
 	} catch (error) {
 		console.log("Error in signup ", error.message);
@@ -73,6 +74,7 @@ export const login = async (req, res) => {
 			fullName: user.fullName,
 			email: user.email,
 			profilePic: user.profilePic,
+			createdAt: user.createdAt,
 		});
 	} catch (error) {
 		console.log("Error in login ", error.message);
@@ -91,18 +93,22 @@ export const logout = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-	const { profilePic } = req.file;
+	const profilePic = req.file;
 	try {
 		if (!profilePic) {
 			return res.status(400).json({ message: "Profile pic is required" });
 		}
-		const uploadResponse = await cloudinary.uploader.upload(profilePic);
-		const userUpdate = await User.findById(req.user._id)
-		user.profilePic= uploadResponse.secure_url
-		await user.save()
-		return res.status(200).json(userUpdate)
+		const uploadResponse = await cloudinary.uploader.upload(
+			profilePic.path,
+		);
+		const userUpdate = await User.findById(req.user._id).select(
+			"-password",
+		);
+		userUpdate.profilePic = uploadResponse.secure_url;
+		await userUpdate.save();
+		return res.status(200).json(userUpdate);
 	} catch (error) {
-		console.log("Error in updateProfile controller", error.message);
+		console.log("Error in updateProfile controller", error);
 		res.status(500).json({ message: "Internal Server Error" });
 	}
 };
