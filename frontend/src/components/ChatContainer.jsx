@@ -7,11 +7,24 @@ import MessageShowCase from "../components/MessageShowCase.jsx";
 import MessageSkeleton from "../components/skeletons/MessageSkeleton.jsx";
 
 const ChatContainer = () => {
-	const { getMessages, selectedUser, isMessagesLoading } = useChatStore();
-	
+	const {
+		getMessages,
+		selectedUser,
+		isMessagesLoading,
+		subscribeToMessages,
+		unsubscribeFromMessages,
+	} = useChatStore();
+
 	useEffect(() => {
 		getMessages(selectedUser._id);
-	}, [getMessages, selectedUser._id]);
+		subscribeToMessages();
+		return () => unsubscribeFromMessages();
+	}, [
+		getMessages,
+		selectedUser._id,
+		subscribeToMessages,
+		unsubscribeFromMessages,
+	]);
 
 	if (isMessagesLoading) {
 		return (

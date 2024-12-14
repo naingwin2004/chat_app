@@ -4,7 +4,7 @@ import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 import { useAuthStore } from "../store/auth.store.js";
 
 const Navbar = () => {
-	const { logout, authUser } = useAuthStore();
+	const { logout, isLoggingOut, authUser } = useAuthStore();
 
 	return (
 		<div className='navbar fixed top-0 z-50 bg-base-100 shadow'>
@@ -42,6 +42,7 @@ const Navbar = () => {
 
 							<button
 								className='btn btn-sm flex gap-2 items-center'
+								disabled={isLoggingOut}
 								onClick={logout}>
 								<LogOut className='size-5' />
 								<span className='hidden sm:inline'>Logout</span>
