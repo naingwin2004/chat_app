@@ -16,7 +16,7 @@ app.use(express.json()); // req.body => parse json data
 app.use(cookieParser()); // parse to cookie
 app.use(
 	cors({
-		origin: process.env.CLIENT_URI,
+		origin: process.env.CLIENT_URI|| "http://localhost:5173",
 		credentials: true,
 	}),
 );
