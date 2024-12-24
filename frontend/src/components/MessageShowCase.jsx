@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Trash } from "lucide-react";
-import { formatISO9075 } from "date-fns";
+import { formatMessageTime } from "../utils/formatTime.js";
 
 import { useAuthStore } from "../store/auth.store.js";
 import { useChatStore } from "../store/chat.store.js";
@@ -32,9 +32,9 @@ const MessageShowCase = () => {
 	}
 	return (
 		<div className='flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-4'>
-			{messages.map((message) => (
+			{messages.map((message, index) => (
 				<div
-					key={message._id}
+					key={message._id || index}
 					ref={messageEndRef}
 					onClick={() =>
 						document.getElementById(message._id).showModal()
@@ -46,7 +46,7 @@ const MessageShowCase = () => {
 					}`}>
 					<div className='chat-header mb-1'>
 						<time className='text-xs opacity-50 ml-1'>
-							{formatISO9075(new Date(message.createdAt))}
+							{formatMessageTime(message.createdAt)}
 						</time>
 					</div>
 					<div className='chat-bubble flex flex-col justify-center'>
@@ -81,20 +81,22 @@ const MessageShowCase = () => {
 									/>
 								)}
 							</div>
-							
-							{message.senderId === authUser._id && 							<div className='flex justify-end'>
-								<button
-									disabled={isDeleteMessageLoading}
-									className='btn bg-red-700 text-base-300 rounded-md'
-									onClick={() =>
-										handleDeleteMessage(message._id)
-									}>
-									<Trash className='size-5' />
-									{isDeleteMessageLoading
-										? "deleting..."
-										: "Delete message"}
-								</button>
-							</div>}
+
+							{message.senderId === authUser._id && (
+								<div className='flex justify-end'>
+									<button
+										disabled={isDeleteMessageLoading}
+										className='btn bg-red-700 text-base-300 rounded-md'
+										onClick={() =>
+											handleDeleteMessage(message._id)
+										}>
+										<Trash className='size-5' />
+										{isDeleteMessageLoading
+											? "deleting..."
+											: "Delete message"}
+									</button>
+								</div>
+							)}
 						</div>
 						<form
 							method='dialog'

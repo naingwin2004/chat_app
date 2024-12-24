@@ -16,7 +16,7 @@ export const useChatStore = create((set, get) => ({
 		set({ isUsersLoading: true });
 		try {
 			const res = await axiosInstance.get("/messages/users");
-			set({ users: res.data });
+			set({ users: [...get().users, res.data] });
 		} catch (error) {
 			console.log(error);
 			toast.error(error.response.data.message);
@@ -29,7 +29,7 @@ export const useChatStore = create((set, get) => ({
 		set({ isMessagesLoading: true });
 		try {
 			const res = await axiosInstance.get(`/messages/${userId}`);
-			set({ messages: res.data });
+			set({ messages: [...get().messages,res.data] });
 		} catch (error) {
 			toast.error(error.response.data.message);
 		} finally {
@@ -93,12 +93,14 @@ export const useChatStore = create((set, get) => ({
 				messages: [...get().messages, newMessage],
 			});
 		});
-		
+
 		socket.on("deletedMessage", (deletedMessageId) => {
-  set((state) => ({
-    messages: state.messages.filter((message) => message._id !== deletedMessageId),
-  }));
-});
+			set((state) => ({
+				messages: state.messages.filter(
+					(message) => message._id !== deletedMessageId,
+				),
+			}));
+		});
 	},
 
 	unsubscribeFromMessages: () => {
