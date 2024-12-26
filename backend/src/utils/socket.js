@@ -30,6 +30,7 @@ io.on("connection", (socket) => {
 		console.log("A user disconnect", socket.id);
 
 		delete userSocketMap[userId];
+		io.emit("getOnileUsers", Object.keys(userSocketMap));
 	});
 });
 

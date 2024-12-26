@@ -4,6 +4,8 @@ import { io } from "socket.io-client";
 
 import { axiosInstance } from "../utils/axios.js";
 
+const Base_Url = import.meta.env.VITE_SERVER_URI;
+
 export const useAuthStore = create((set, get) => ({
 	authUser: null,
 	isSigningUp: false,
@@ -17,6 +19,7 @@ export const useAuthStore = create((set, get) => ({
 
 	checkAuth: async () => {
 		try {
+			set({ authUser: null });
 			const res = await axiosInstance.get("/auth/check-auth");
 			get().connectSocket();
 			set({ authUser: res.data });
@@ -63,7 +66,7 @@ export const useAuthStore = create((set, get) => ({
 
 	logout: async () => {
 		try {
-		  set({isLoggingOut:true})
+			set({ isLoggingOut: true });
 			const res = await axiosInstance.post("/auth/logout");
 			get().disconnectSocket();
 			toaster.success(res.data.message);
@@ -71,8 +74,8 @@ export const useAuthStore = create((set, get) => ({
 		} catch (error) {
 			console.log("Error in logout : ", error);
 			toaster.error(error.response.data.message);
-		}finally{
-		  set({isLoggingOut:false})
+		} finally {
+			set({ isLoggingOut: false });
 		}
 	},
 
@@ -91,22 +94,23 @@ export const useAuthStore = create((set, get) => ({
 
 	connectSocket: async () => {
 		const { authUser } = get();
-		if (!authUser || get().socket?.connected) {
+		if (!authUser) {
 			return;
 		}
-		const socket = await io("http://localhost:8000", {
+		const socket = await io(Base_Url, {
 			query: { userId: authUser._id },
 		});
 		socket.connect();
-		
-		socket.on("getOnileUsers",(userIds)=>{
-		  set({onlineUsers:userIds})
-		})
+
+		socket.on("getOnileUsers", (userIds) => {
+			set({ onlineUsers: userIds });
+		});
 
 		set({ socket: socket });
 	},
 	disconnectSocket: () => {
 		if (get().socket?.connected) {
+			console.log("disconnectSocket", get().socket?.connected);
 			get().socket.disconnect();
 		}
 	},

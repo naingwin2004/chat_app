@@ -86,6 +86,12 @@ export const useChatStore = create((set, get) => ({
 		if (!selectedUser) return;
 
 		const socket = useAuthStore.getState().socket;
+		const logout = useAuthStore.getState().logout;
+
+		if (!socket) {
+			logout();
+			return toast.error("Somthin went wrong!");
+		}
 
 		socket.on("newMessage", (newMessage) => {
 			if (newMessage.senderId !== selectedUser._id) return;
@@ -93,16 +99,23 @@ export const useChatStore = create((set, get) => ({
 				messages: [...get().messages, newMessage],
 			});
 		});
-		
+
 		socket.on("deletedMessage", (deletedMessageId) => {
-  set((state) => ({
-    messages: state.messages.filter((message) => message._id !== deletedMessageId),
-  }));
-});
+			set((state) => ({
+				messages: state.messages.filter(
+					(message) => message._id !== deletedMessageId,
+				),
+			}));
+		});
 	},
 
 	unsubscribeFromMessages: () => {
 		const socket = useAuthStore.getState().socket;
+		const logout = useAuthStore.getState().logout;
+		if (!socket) {
+			logout();
+			return toast.error("Somthin went wrong!");
+		}
 		socket.off("newMessage");
 	},
 
